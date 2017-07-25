@@ -3,6 +3,11 @@
 ## Introduction
 
 A widget for implementing comments plugin
+
+## Prerequisites (only for testing / preview)
+
+1. Install Node
+2. ```npm install```
  
 ## Directory Structore
 
@@ -21,7 +26,7 @@ The `/` project directory contains all code used in the application along with a
 
 ## Build & development
 
-Run `grunt build` for building and `grunt` for preview.
+Run `npm run build` for building and `npm run start` for preview.
 
 ## Usage
 ```

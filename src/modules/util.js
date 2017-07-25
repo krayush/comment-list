@@ -32,7 +32,12 @@
         }
         return resultSeconds + " seconds ago";
     }
+    function findAncestor (el, cls) {
+        while ((el = el.parentElement) && !el.classList.contains(cls));
+        return el;
+    }
     window.commentListUtils = {
-        timeSince: timeSince
+        timeSince: timeSince,
+        findAncestor: findAncestor
     };
 })(window);

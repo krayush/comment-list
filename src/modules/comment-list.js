@@ -8,6 +8,7 @@
             standardImage: "images/test-user.png",
             noUserImage: "images/no-name-user.png",
             inputPlaceHolder: "Join the discussion",
+            replyPlaceHolder: "Enter reply",
             userLinkFormatter: function (text) {
                 return text;
             }
@@ -16,7 +17,13 @@
     // constructor for creating element
     function Element(type, className, content, dataAttrs) {
         var element = document.createElement(type || "div");
-        className && element.classList.add(className);
+        if(className) {
+            var classList = className.split(" ");
+            classList.forEach(function (classItem) {
+                element.classList.add(classItem);
+            })
+        }
+
         element.innerHTML = content || "";
         if(dataAttrs && dataAttrs.length) {
             dataAttrs.forEach(function(dataAttr) {
@@ -48,6 +55,39 @@
         return element;
     }
 
+    function ReplySection(config, list, render) {
+        var container = new Element("div", "reply-container hide");
+        var input = new Element("input", "", "", [{
+            key: "type",
+            value: "text"
+        }, {
+            key: "placeholder",
+            value: config.replyPlaceHolder
+        }]);
+        var enterCallback = function (e) {
+            var text = e.target.value;
+            if(typeof config.replyCommentHandler === "function") {
+                config.replyCommentHandler({
+                    parentId: list.id,
+                    content: text
+                }).then(function (resp) {
+                    list.children.unshift(resp);
+                    render();
+                });
+            } else {
+                console.log("revertDislikeHandler not registered");
+            }
+        };
+        container.appendChild(input);
+        input.addEventListener("keypress", function (e) {
+            var keyCode = e.which;
+            if (keyCode == 13) {
+                enterCallback(e);
+            }
+        });
+        return container;
+    }
+
     // constructor for likes and dislikes section
     function LikesDislikes(item, config) {
         var container = new Element("div", "like-dislike-container");
@@ -55,10 +95,10 @@
             container.innerHTML = "";
             var likes = new Element("span",
                 item.yourLike === "like" ? 'liked': "like",
-                (item.likes || 0) + " - " + (item.yourLike === "like" ? 'liked': "like"));
+                (item.likes || 0) + " - " + (item.yourLike === "like" ? 'Liked': "Like"));
             var dislikes = new Element("span",
                 item.yourLike === "dislike" ? 'disliked': "dislike",
-                (item.dislikes || 0) + " - "+(item.yourLike === "dislike" ? 'disliked': "dislike"));
+                (item.dislikes || 0) + " - "+(item.yourLike === "dislike" ? 'Disliked': "Dislike"));
             var reply = new Element("span", "reply", "Reply");
             var share = new Element("span", "share", "Share");
 
@@ -67,90 +107,117 @@
             container.appendChild(reply);
             container.appendChild(share);
         }
-        render();
-
-        // Handling event via event delegation to avoid re-attaching events
-        container.addEventListener("click", function (e) {
-            var className = e.target.className;
-            switch(className) {
-                case "share":
-                    var event = new CustomEvent("share-post", { detail: item });
-                    document.dispatchEvent(event);
-                    break;
-                case "like":
-                    if(config.likeHandler) {
-                        config.likeHandler(item).then(function (resp) {
-                            item = Object.assign(item, resp);
-                            render();
-                        });
-                    } else {
-                        console.log("likeHandler not registered");
-                    }
-                    break;
-                case "dislike":
-                    if(config.dislikeHandler) {
-                        config.dislikeHandler(item).then(function (resp) {
-                            item = Object.assign(item, resp);
-                            render();
-                        });
-                    } else {
-                        console.log("dislikeHandler not registered");
-                    }
-                    break;
-                case "liked":
-                    if(config.revertLikeHandler) {
-                        config.revertLikeHandler(item).then(function (resp) {
-                            item = Object.assign(item, resp);
-                            render();
-                        });
-                    } else {
-                        console.log("revertLikeHandler not registered");
-                    }
-                    break;
-                case "disliked":
-                    if(config.revertDislikeHandler) {
-                        config.revertDislikeHandler(item).then(function (resp) {
-                            item = Object.assign(item, resp);
-                            render();
-                        });
-                    } else {
-                        console.log("revertDislikeHandler not registered");
-                    }
-                    break;
+        function likeHandler() {
+            if(config.likeHandler) {
+                config.likeHandler(item).then(function (resp) {
+                    item = Object.assign(item, resp);
+                    render();
+                });
+            } else {
+                console.log("likeHandler not registered");
             }
-        })
+        }
+        function dislikeHandler() {
+            if(config.dislikeHandler) {
+                config.dislikeHandler(item).then(function (resp) {
+                    item = Object.assign(item, resp);
+                    render();
+                });
+            } else {
+                console.log("dislikeHandler not registered");
+            }
+        }
+        function likedHandler() {
+            if(config.revertLikeHandler) {
+                config.revertLikeHandler(item).then(function (resp) {
+                    item = Object.assign(item, resp);
+                    render();
+                });
+            } else {
+                console.log("revertLikeHandler not registered");
+            }
+        }
+        function dislikedHandler() {
+            if(config.revertDislikeHandler) {
+                config.revertDislikeHandler(item).then(function (resp) {
+                    item = Object.assign(item, resp);
+                    render();
+                });
+            } else {
+                console.log("revertDislikeHandler not registered");
+            }
+        }
+        function replyHandler(e) {
+            var parent = commentListUtils.findAncestor(e.target, "comment-block");
+            parent.querySelector(".reply-container").classList.remove("hide");
+        }
+        // Handling event via event delegation to avoid re-attaching events
+        function addEventListenerForLikeDislikeSection() {
+            container.addEventListener("click", function (e) {
+                var className = e.target.className;
+                switch(className) {
+                    case "share":
+                        var event = new CustomEvent("share-post", { detail: item });
+                        document.dispatchEvent(event);
+                        break;
+                    case "like":
+                        likeHandler();
+                        break;
+                    case "dislike":
+                        dislikeHandler();
+                        break;
+                    case "liked":
+                        likedHandler();
+                        break;
+                    case "disliked":
+                        dislikedHandler();
+                        break;
+                    case "reply":
+                        replyHandler(e);
+                        break;
+                }
+            });
+        }
+        addEventListenerForLikeDislikeSection();
+        render();
         return container;
     }
 
     function Comment(list, config) {
-        var commentSection, children, imageContainer, likesDislikes, clearDiv, userName, time, content;
+        var commentSection, children, imageContainer, likesDislikes, clearDiv, userName, time, content, replySection;
         var container = new Element("div");
-        list.forEach(function(item) {
-            clearDiv = new Element("div", "clear");
-            likesDislikes = new LikesDislikes(item, config);
-            imageContainer = new ImageContainer(item.userImageUrl, "user-image", config);
-            commentSection = new Element("div", "comment-block")
-            children = new Element("div", "children-comments");
-            userName = new Element("span", "user-name", config.userLinkFormatter(item.userName));
-            time = new Element("span", "comment-time", commentListUtils.timeSince(item.time));
-            content = new Element("div", "content", item.content);
+        function render() {
+            container.innerHTML = "";
+            list.forEach(function(item) {
+                clearDiv = new Element("div", "clear");
+                likesDislikes = new LikesDislikes(item, config);
+                imageContainer = new ImageContainer(item.userImageUrl, "user-image", config);
+                commentSection = new Element("div", "comment-block")
+                children = new Element("div", "children-comments");
+                userName = new Element("span", "user-name", config.userLinkFormatter(item.userName));
+                time = new Element("span", "comment-time", commentListUtils.timeSince(item.time));
+                content = new Element("div", "content", item.content);
+                replySection = new ReplySection(config, item, render);
+                // Appending div to container
+                commentSection.appendChild(imageContainer);
+                commentSection.appendChild(userName);
+                commentSection.appendChild(time);
+                commentSection.appendChild(content);
+                commentSection.appendChild(likesDislikes);
+                commentSection.appendChild(replySection);
 
-            // Appending div to container
-            commentSection.appendChild(imageContainer);
-            commentSection.appendChild(userName);
-            commentSection.appendChild(time);
-            commentSection.appendChild(content);
-            commentSection.appendChild(likesDislikes);
-            commentSection.appendChild(clearDiv);
+                commentSection.appendChild(clearDiv);
 
-            // Processing children
-            if(item.children && item.children.length) {
-                var comment = new Comment(item.children, config);
-                children.appendChild(comment);
-            }
-            commentSection.appendChild(children);
-            container.appendChild(commentSection);
-        });
+                // Processing children
+                if(item.children && item.children.length) {
+                    var comment = new Comment(item.children, config);
+                    children.appendChild(comment);
+                }
+                commentSection.appendChild(children);
+                container.appendChild(commentSection);
+            });
+        }
+        render();
         return container;
     }
 
@@ -180,16 +247,19 @@
         // Adding Event Listener to main input
         addEnterEventToInput(mainContainer, function(e) {
             var content = e.target.value;
-            if(typeof config.submitAPIHandler === "function") {
-                config.submitAPIHandler({
-                    content: content
-                }).then(function (resp) {
-                    self.list.unshift(resp);
-                    self.destroy();
-                    self.render();
-                });
-            } else {
-                console.log("Don't know what to do with this comment");
+            content = content.trim();
+            if(content) {
+                if (typeof config.submitAPIHandler === "function") {
+                    config.submitAPIHandler({
+                        content: content
+                    }).then(function (resp) {
+                        self.list.unshift(resp);
+                        self.destroy();
+                        self.render();
+                    });
+                } else {
+                    console.log("Don't know what to do with this comment");
+                }
             }
         });
     };
