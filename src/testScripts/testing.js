@@ -240,5 +240,21 @@ var b = commentList([{
             });
         });
     },
+    replyCommentHandler: function (data) {
+        return new Promise(function (resolve, reject) {
+            resolve({
+                id: Math.random(),
+                content: data.content,
+                userId: 12,
+                userImageUrl: "",
+                userName: "test",
+                likes: 0,
+                dislikes: 0,
+                time: Date.now(),
+                yourLike: "",
+                children: []
+            });
+        });
+    }
 });
 b.render();

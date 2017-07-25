@@ -36,8 +36,9 @@
         while ((el = el.parentElement) && !el.classList.contains(cls));
         return el;
     }
-    window.commentListUtils = {
-        timeSince: timeSince,
-        findAncestor: findAncestor
-    };
+    if(typeof window.commentListUtils === "undefined") {
+        window.commentListUtils = {};
+    }
+    window.commentListUtils.timeSince = timeSince;
+    window.commentListUtils.findAncestor = findAncestor;
 })(window);
