@@ -30,6 +30,14 @@ Run `npm run build` for building and `npm run start` for preview.
 
 **Note: Please check testing.js for full fledged implementation**
 
+## Usage in existing project
+
+```
+<script src="path-to-dist-comment-list-min.js"></script>
+<link rel="stylesheet" type="text/css" href="path-to-dist-main.css" />
+
+```
+
 ## Usage
 ```
 var list = commentList([{
