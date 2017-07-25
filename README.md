@@ -28,6 +28,8 @@ The `/` project directory contains all code used in the application along with a
 
 Run `npm run build` for building and `npm run start` for preview.
 
+**Note: Please check testing.js for full fledged implementation**
+
 ## Usage
 ```
 var list = commentList([{
@@ -116,4 +118,14 @@ Below is the basic config structure
 - Changing maximum nesting level of allowing comments
 ```
 maxLevelDown: 4
+```
+
+- Reply Handler
+
+```$xslt
+replyCommentHandler: function (data) {
+    return new Promise(function (resolve, reject) {
+        
+    });
+}
 ```
