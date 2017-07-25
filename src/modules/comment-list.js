@@ -9,6 +9,7 @@
             noUserImage: "images/no-name-user.png",
             inputPlaceHolder: "Join the discussion",
             replyPlaceHolder: "Enter reply",
+            maxLevelDown: 2,
             userLinkFormatter: function (text) {
                 return text;
             }
@@ -89,7 +90,7 @@
     }
 
     // constructor for likes and dislikes section
-    function LikesDislikes(item, config) {
+    function LikesDislikes(item, config, level) {
         var container = new Element("div", "like-dislike-container");
         function render() {
             container.innerHTML = "";
@@ -99,12 +100,15 @@
             var dislikes = new Element("span",
                 item.yourLike === "dislike" ? 'disliked': "dislike",
                 (item.dislikes || 0) + " - "+(item.yourLike === "dislike" ? 'Disliked': "Dislike"));
+
             var reply = new Element("span", "reply", "Reply");
             var share = new Element("span", "share", "Share");
 
             container.appendChild(likes);
             container.appendChild(dislikes);
-            container.appendChild(reply);
+            if(config.maxLevelDown >= level) {
+                container.appendChild(reply);
+            }
             container.appendChild(share);
         }
         function likeHandler() {
@@ -183,14 +187,14 @@
         return container;
     }
 
-    function Comment(list, config) {
+    function Comment(list, config, level) {
         var commentSection, children, imageContainer, likesDislikes, clearDiv, userName, time, content, replySection;
         var container = new Element("div");
         function render() {
             container.innerHTML = "";
             list.forEach(function(item) {
                 clearDiv = new Element("div", "clear");
-                likesDislikes = new LikesDislikes(item, config);
+                likesDislikes = new LikesDislikes(item, config, level);
                 imageContainer = new ImageContainer(item.userImageUrl, "user-image", config);
                 commentSection = new Element("div", "comment-block")
                 children = new Element("div", "children-comments");
@@ -204,13 +208,14 @@
                 commentSection.appendChild(time);
                 commentSection.appendChild(content);
                 commentSection.appendChild(likesDislikes);
-                commentSection.appendChild(replySection);
-
+                if(config.maxLevelDown >= level) {
+                    commentSection.appendChild(replySection);
+                }
                 commentSection.appendChild(clearDiv);
 
                 // Processing children
                 if(item.children && item.children.length) {
-                    var comment = new Comment(item.children, config);
+                    var comment = new Comment(item.children, config, level + 1);
                     children.appendChild(comment);
                 }
                 commentSection.appendChild(children);
@@ -227,7 +232,7 @@
     CommentList.prototype.render = function () {
         var self = this;
         var config = this.config;
-        var comment = new Comment(this.list, config);
+        var comment = new Comment(this.list, config, 1);
         var inputSection = new InputSection(config);
 
         // comments-widget wrapper

@@ -107,7 +107,13 @@ Below is the basic config structure
     inputPlaceHolder: "Join the discussion",
     userLinkFormatter: function (text) {
         return text;
-    }
+    },
+    maxLevelDown: 4
 }
 
+```
+
+- Changing maximum nesting level of allowing comments
+```
+maxLevelDown: 4
 ```
