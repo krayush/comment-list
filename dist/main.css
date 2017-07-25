@@ -1,0 +1,53 @@
+.comments-widget * {
+  box-sizing: border-box;
+  font-size: 12px;
+  font-family: sans-serif; }
+.comments-widget .user-image {
+  height: 50px;
+  float: left;
+  width: 50px;
+  margin-right: 10px; }
+.comments-widget .comment-list-container {
+  margin-top: 20px; }
+  .comments-widget .comment-list-container .like, .comments-widget .comment-list-container .dislike, .comments-widget .comment-list-container .liked, .comments-widget .comment-list-container .disliked, .comments-widget .comment-list-container .reply {
+    cursor: pointer; }
+  .comments-widget .comment-list-container .liked, .comments-widget .comment-list-container .disliked {
+    font-weight: bold; }
+  .comments-widget .comment-list-container .children-comments {
+    width: calc(100% - 60px);
+    margin-left: 60px;
+    margin-top: 20px; }
+  .comments-widget .comment-list-container .comment-time {
+    color: #8a8a8a; }
+  .comments-widget .comment-list-container .comment-block:first-of-type {
+    margin-top: 20px; }
+  .comments-widget .comment-list-container .comment-time {
+    margin-left: 20px; }
+  .comments-widget .comment-list-container .like-dislike-container {
+    color: #8a8a8a; }
+    .comments-widget .comment-list-container .like-dislike-container > span {
+      margin-right: 10px; }
+      .comments-widget .comment-list-container .like-dislike-container > span:hover {
+        color: #3c7bb9; }
+  .comments-widget .comment-list-container .content, .comments-widget .comment-list-container .like-dislike-container {
+    margin: 5px 0 0 60px;
+    width: calc(100% - 60px); }
+  .comments-widget .comment-list-container .share {
+    cursor: pointer; }
+  .comments-widget .comment-list-container .user-name {
+    color: #3c7bb9;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none; }
+    .comments-widget .comment-list-container .user-name > a {
+      color: #3c7bb9;
+      text-decoration: none; }
+.comments-widget .clear {
+  clear: both; }
+.comments-widget .input-section {
+  width: calc(100% - 60px);
+  resize: none;
+  height: 50px;
+  padding: 10px; }
+
+/*# sourceMappingURL=main.css.map */

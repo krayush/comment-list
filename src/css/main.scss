@@ -1,0 +1,73 @@
+@import 'variables';
+.comments-widget {
+    * {
+        box-sizing: border-box;
+        font-size: $font-size;
+        font-family: $font-family;
+    }
+    .user-image {
+        height: 50px;
+        float: left;
+        width: 50px;
+        margin-right: 10px;
+    }
+    .comment-list-container {
+        margin-top: 20px;
+        .like, .dislike, .liked, .disliked, .reply {
+            cursor: pointer;
+        }
+        .liked, .disliked {
+            font-weight: bold;
+        }
+        .children-comments {
+            width: calc(100% - 60px);
+            margin-left: 60px;
+            margin-top: 20px;
+        }
+        .comment-time {
+            color: #8a8a8a;
+        }
+        .comment-block:first-of-type {
+            margin-top: 20px;
+        }
+        .comment-time {
+            margin-left: 20px;
+        }
+        .like-dislike-container {
+            color: #8a8a8a;
+            > span {
+                margin-right: 10px;
+                &:hover {
+                    color: #3c7bb9;
+                }
+            }
+        }
+        .content, .like-dislike-container {
+            margin: 5px 0 0 60px;
+            width: calc(100% - 60px);
+        }
+        .share {
+            cursor: pointer;
+        }
+        .user-name {
+            color: #3c7bb9;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            > a {
+                color: #3c7bb9;
+                text-decoration: none;
+            }
+        }
+    }
+    .clear {
+        clear: both;
+    }
+    .input-section {
+        width: calc(100% - 60px);
+        resize: none;
+        height: 50px;
+        padding: 10px;
+    }
+
+}
